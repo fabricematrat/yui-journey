@@ -1,0 +1,488 @@
+<!DOCTYPE HTML>
+<!--[if IE 6]>
+<html id="ie6" lang="en-US" class="ie ie6 lt-ie9">
+<![endif]-->
+<!--[if IE 7]>
+<html id="ie7" lang="en-US" class="ie ie7 lt-ie9">
+<![endif]-->
+<!--[if IE 8]>
+<html id="ie8" lang="en-US" class="ie ie8 lt-ie9">
+<![endif]-->
+<!--[if gte IE 9]>
+<html lang="en-US" class="ie ie9">
+<![endif]-->
+<!--[if !(IE)]><!-->
+<html lang="en-US" class="">
+<!--<![endif]-->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <title>YU3 journey</title>
+    <link rel="stylesheet" href="assets/css/reset.css">
+    <link rel="stylesheet" href="css/flowtime.css">
+    <link rel="stylesheet" href="css/themes/default.css">
+    <link rel="stylesheet" href="assets/css/prism.css">
+
+    <link rel="apple-touch-icon-precomposed"             href="img/touch-icon-iphone.png">
+    <link rel="apple-touch-icon-precomposed"   sizes="72x72"     href="img/touch-icon-ipad.png">
+    <link rel="apple-touch-icon-precomposed"   sizes="114x114"   href="img/touch-icon-iphone-retina.png">
+    <link rel="apple-touch-icon-precomposed"   sizes="144x144"   href="img/touch-icon-ipad-retina.png">
+    <link href="img/favicon.ico" type="image/x-ico" rel="icon"/>
+
+</head>
+<body class="">
+
+<div class="flowtime">
+
+<div class="ft-section" data-id="Starters">
+    <div class="ft-page" data-id="YUI3Journey" data-title="YUI3Journey">
+        <div class="stack-center">
+            <div class="stacked-center">
+                <h2>My <strong>tribulations</strong> into the world of MV*</h2>
+				<h1><strong class="ubuntu">YUI3</strong></h1><hr/><br/>
+                <a style="font-size:2em" href="">Fabrice Matrat</a>
+                        <canvas id="animationcanvas" style="width: 100%; position: absolute; left: 0; bottom: 145px;" width="1000" height="50" ></canvas>
+        <code style="visibility: hidden;" id="animationcontent" class="language-javascript">
+            var f = true;
+            function animate() {
+                f = !f;
+                moveObject('emily', {
+                    role: 'turtle2',
+                    y: 19,
+                    x: f ? 0 : 19,
+                    rotation: 0
+                }, function () {});
+                moveObject('franklin', {
+                    role: 'turtle1',
+                    y: 19,
+                    x: f ? 19 : 0,
+                    rotation: 0
+                }, animate);
+            }
+            animate();</pre></code>
+
+        <script>
+            (function () {
+                var canvas = document.getElementById('animationcanvas');
+                var ctx = canvas.getContext('2d');
+                var grid = 20;
+                ctx.scale(canvas.width / grid, canvas.height);
+                ctx.translate(1/2, 1/2);
+
+                var images = {};
+                function draw(place) {
+                    if (!images[place.role]) {
+                        images[place.role] = new Image();
+                        images[place.role].src = 'img/' + place.role + '.png';
+                    }
+                    ctx.save();
+                    ctx.translate(place.x, grid - 1 - place.y);
+                    ctx.rotate(- place.rotation);
+                    ctx.drawImage(images[place.role], -1/2, -1/2, 1, 1);
+                    ctx.restore();
+                }
+
+                function average(from, to, progress) {
+                    return from + (to - from) * progress;
+                }
+
+                var duration = 10000;
+                var current = {};
+                var animated = {};
+                function animate() {
+                    var name;
+                    var cont = false;
+                    ctx.clearRect(-1, -1, grid + 1, grid + 1);
+                    //drawGrid();
+                    for (name in animated) {
+                        if (animated.hasOwnProperty(name)) {
+                            var to = animated[name];
+                            var from = current[name];
+                            var progress = (Date.now() - to.startTime) / duration;
+                            if (progress > 1) {
+                                current[name] = {
+                                    role: to.role,
+                                    x: to.x,
+                                    y: to.y,
+                                    rotation: to.rotation
+                                };
+                                delete animated[name];
+                                if (to.cb) {
+                                    to.cb();
+                                }
+                            } else {
+                                cont = true;
+                                draw({
+                                    role: to.role,
+                                    x: average(from.x, to.x, progress),
+                                    y: average(from.y, to.y, progress),
+                                    rotation: average(from.rotation, to.rotation, progress)
+                                });
+                            }
+                        }
+                    }
+                    for (name in current) {
+                        if (current.hasOwnProperty(name) && !animated[name]) {
+                            draw(current[name]);
+                        }
+                    }
+                    if (cont) {
+                        setTimeout(animate, 1000 / 60);
+                    }
+                }
+
+                function moveObject(name, object, callback) {
+                    if (!current[name]) {
+                        current[name] = object;
+                        animate();
+                        callback();
+                    } else {
+                        object.startTime = Date.now();
+                        object.cb = callback;
+                        animated[name] = object;
+                        animate();
+                    }
+                }
+                eval('(function() {' + document.getElementById('animationcontent').innerHTML + '}())');
+            })();
+        </script>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="ft-section" data-id="Structure">
+
+    <div class="ft-page" data-id="TitleStructure" data-title="TitleStructure">
+        <div class="stack-center">
+            <div class="stacked-center">
+                <h1><strong class="ubuntu">Structure</strong></h1>
+                <h2><strong>Single</strong>-Page JavaScript applications</h2>
+                <hr/><br/>
+            </div>
+        </div>
+    </div>
+
+    <div class="ft-page" data-id="MVC" data-title="MVC">
+        <div class="stack-center">
+            <div class="stacked-center">
+                <h1>Use a <strong class="ubuntu">MV*</strong></h1>
+                <hr/><br/>
+                <img src="img/mvc.png"/>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="ft-page" data-id="MVCConcept" data-title="MVCConcept">
+        <div class="stack-center">
+            <div class="stacked-center">
+                <h1>Why?</h1>
+                <hr/><br/>
+                <ul class="steps">
+                    <li><strong class="ubuntu">Write-only</strong> DOM</li>
+                    <li>Models as the <strong>single</strong> source of truth</li>
+                    <li>Views <strong class="ubuntu">observe</strong> model changes</li>
+                    <li>Client side <strong>router</strong> for events</li>
+                    <li><strong class="ubuntu">Min</strong>imizing DOM dependent-code</li>
+                    <li>Decoupled modules that expose <strong>small</strong> external surfaces</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="ft-page" data-id="Quote" data-title="Quote">
+        <div class="stack-center">
+            <div class="stacked-center">
+                <blockquote>
+                    "The future of Javascript is <strong>modules</strong> not frameworks"
+                </blockquote>
+                <cite><strong class="ubuntu">John Hann</strong></cite>
+            </div>
+        </div>
+    </div>
+
+    <div class="ft-page" data-id="ModulePhilo" data-title="ModulePhilo">
+        <div class="stack-center">
+            <div class="stacked-center">
+                <h1>Code <strong class="ubuntu">utopia</strong></h1>
+                <hr/><br/>
+                <ul>
+                    <li>stand-alone, single-purposed modules</li>
+                    <li>small, fast, no wasted code</li>
+                    <li>my code is my code</li>
+                    <li>no commitment, choose best-of-class</li>
+                    <li>no globals at all</li>
+                    <li>ignore old browsers</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="ft-page" data-id="Promise" data-title="Promise">
+        <div class="stack-center">
+            <div class="stacked-center">
+                <h1><strong class="ubuntu">Survive</strong> asynch</h1>
+                <hr/><br/>
+                <pre><code class="language-javascript">Promise.prototype.then = function (onResolved, onRejected) {
+    /* invoke handlers based upon state transition */
+};</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="ft-page" data-id="Widget" data-title="Widget">
+        <div class="stack-center">
+            <div class="stacked-center">
+                <h1>Widget <strong>Lifecycle</strong></h1>
+                <hr/><br/>
+                <img class="stacked-center" width="70%" src="img/widget.png"/>
+            </div>
+        </div>
+    </div>
+
+    <div class="ft-page" data-id="InterViewDiscussion" data-title="InterViewDiscussion">
+        <div class="stack-center">
+            <div class="stacked-center">
+                <h1><strong class="ubuntu">Mediator</strong> Pattern</h1>
+                <hr/><br/>
+                <img class="stacked-center" width="110%" src="img/mediator.jpg"/>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<div class="ft-section" data-id="MyApp">
+
+    <div class="ft-page" data-id="UseCase" data-title="UseCase">
+        <div class="stack-center">
+            <div class="stacked-center">
+                <h1>Show me the <strong>code</strong>!</h1>
+                <h2><strong class="ubuntu">Cute</strong> Turtles game</h2>
+                <hr/><br/>
+                <img class="stacked-center" width="110%" src="img/cute.png"/>
+            </div>
+        </div>
+    </div>
+
+    <div class="ft-page" data-id="Libs" data-title="Libs">
+        <div class="stack-center">
+            <div class="stacked-center">
+                <h1><strong class="ubuntu">Using</strong> the following:</h1>
+                <hr/><br/>
+                <h2><strong class="ubuntu">YUI3</strong></h2>
+                <h2><strong>Canvas</strong></h2>
+                <h2><strong class="ubuntu">NODE.JS</strong></h2>
+                <h2><strong>socket.io</strong></h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="ft-page" data-id="CodeOrganization" data-title="CodeOrganization">
+        <div class="stack-center">
+            <div class="stacked-center">
+                <h1><strong>Where</strong> do I put my code ?</h1>
+                <hr/><br/>
+                <img class="stacked-center" width="30%" src="img/struc.png"/><br/><br/>
+                <a style="font-size:2em" href="http://github.com/fabricematrat/cuteturtles">http://github.com/fabricematrat/cuteturtles</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="ft-page" data-id="ModuleYUI" data-title="ModuleYUI">
+        <div class="stack-center">
+            <div class="stacked-center">
+				<h1>Write <strong class="ubuntu">Module</strong></h1>
+                <hr/><br/>
+                <pre><code class="language-javascript">YUI.GlobalConfig = {
+	modules: {
+		gameModel: '/app/models/game.js',
+		gameRepository: '/app/repository/gameRepository.js',
+		'socket.io': '/socket.io/socket.io.js',
+		GameView: '/app/views/gameView.js',
+                    ......
+	}
+};</code></pre>
+                <pre><code class="language-javascript">YUI.use('my dep', ..., , function (Y) {</code></pre>
+                <pre><code class="language-javascript">YUI.add('gameRepository', function (Y) {
+                    ...
+}, {requires: ['socket.io', 'promise']});</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="ft-page" data-id="App" data-title="App">
+        <div class="stack-center">
+            <div class="stacked-center">
+				<h1>Create <strong>App</strong></h1>
+                <hr/><br/>
+                <pre><code class="language-javascript">var myApp = new Y.App({
+	views: {
+		GameView: {
+			type: 'GameView'
+		},
+	},
+	games: new Y.ModelList({model: Y.Game}),
+	gameRepository: new Y.GameRepository()
+});
+myApp.route('/', function () {
+                    ...
+});</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="ft-page" data-id="MyView" data-title="MyView">
+        <div class="stack-center">
+            <div class="stacked-center">
+                <h1>Render <strong class="ubuntu">View</strong></h1>
+                <hr/><br/>
+                <pre><code class="language-javascript">YUI.add('GameView', function (Y) {
+	Y.GameView = Y.Base.create('GameView', Y.View, [], {
+		initializer: function () {
+            ...
+			this._panel = new Y.Panel({
+            });
+            ....
+			this._game = this.get('model');
+			this._game.after('stepsChange', this.animate, this);
+        },
+        render: function() {
+			this._panel.render();
+            ...
+            return this;
+        }
+	});
+}, '0.0.1', { requires: ['view', 'node', 'handlebars', ...]});</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="ft-page" data-id="PubSub" data-title="PubSub">
+        <div class="stack-center">
+            <div class="stacked-center">
+                <h1><strong>Communication</strong> point</h1>
+                <hr/><br/>
+                <pre><code class="language-javascript">mediator.subscribe('currentGameChange', function () {
+});
+//later
+this._mediator.publish('currentGameChange');</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="ft-page" data-id="MyPromise" data-title="MyPromise">
+        <div class="stack-center">
+            <div class="stacked-center">
+                <h1>Using <strong class="ubuntu">Promise</strong></h1>
+                <hr/><br/>
+                <pre><code class="language-javascript">gameRepository.loadGames().then(function (data) {
+                    ...
+});</code></pre>
+            </div>
+        </div>
+    </div>
+    <div class="ft-page" data-id="Test" data-title="Test">
+        <div class="stack-center">
+            <div class="stacked-center">
+                <h1><strong>Test</strong> driven</h1>
+                <hr/><br/>
+                <blockquote>
+                    "<strong class="ubuntu">Legacy</strong> code is code without unit tests"
+                </blockquote>
+                <cite>Michael Feathers</cite>
+                <br/><br/>
+                <pre><code class="language-javascript">describe('Game', function () {
+	describe('join', function () {
+		it('should create a position for Emily when joining', function () {
+			var game = new Game(1, 'myUser');
+			var user2 = 'user2';
+			game.join(user2);
+			expect(game.turtles.position.emily).toBeDefined();
+			expect(game.turtles.position.emily).toBeArray();
+			expect(game.turtles.position.emily.length).toEqual(2);
+		});
+	});
+});</code></pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="ft-section" data-id="Thanks">
+
+    <div class="ft-page" data-id="Thank you" data-title="Thank you">
+        <div class="stack-center">
+            <div class="stacked-center">
+                <h1><strong class="ubuntu">Demo</strong> !</h1>
+                <hr/><br/>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+</div>
+
+<script src="js/brav1toolbox.js"></script>
+<script src="js/flowtime.js"></script>
+<script src="assets/js/prism.js"></script>
+
+<script type="text/javascript">
+    var cacheTitle = document.title.replace("Flowtime.js | ", "");
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-1228618-10']);
+    _gaq.push(['_trackPageview']);
+    _gaq.push(['_trackEvent', 'Flowtime', 'Landing', document.title]);
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+    // Configuration API test
+    Flowtime.showProgress(true);
+    // Flowtime.fragmentsOnSide(true);
+    // Flowtime.fragmentsOnBack(true);
+    // Flowtime.useHistory(false);
+    // Flowtime.slideInPx(true);
+    // Flowtime.sectionsSlideToTop(true);
+    // Flowtime.gridNavigation(false);
+    // Flowtime.useOverviewVariant(true);
+    Flowtime.parallaxInPx(true);
+    Flowtime.mouseDragEnabled(true);
+    //
+    // event management
+    Flowtime.addEventListener("flowtimenavigation", onNavigation, false);
+    function onNavigation(e)
+    {
+        _gaq.push(['_trackEvent', 'Flowtime', 'Navigation', cacheTitle + ' > ' + document.title.replace("Flowtime.js | ", "")]);
+        // console.log(cacheTitle + ' > ' + document.title.replace("Flowtime.js | ", ""));
+        cacheTitle = document.title.replace("Flowtime.js | ", "");
+        //console.log('section', e.section, 'sectionIndex', e.sectionIndex);
+        //console.log('page', e.page, 'pageIndex', e.);
+        //console.log('pastSectionIndex', e.pastSectionIndex, 'pastPageIndex', e.pastPageIndex);
+        //console.log('prevSection', e.prevSection);
+        //console.log('nextSection', e.nextSection);
+        //console.log('prevPage', e.prevPage);
+        //console.log('nextPage', e.nextPage);
+        //console.log('fragment', e.fragment, + 'fragmentIndex', e.fragmentIndex);
+        //console.log("isOverview", e.isOverview);
+        //console.log('progress:', e.progress, 'total:', e.total);
+        // var value = Math.round(e.progress * 100 / e.total);
+        // console.log('Completion: ' + value + '%');
+    }
+    // starts the application with configuration options
+    Flowtime.start();
+</script>
+</body>
+</html>
