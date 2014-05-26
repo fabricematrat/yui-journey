@@ -1,1 +1,1 @@
-Presentation done for [Greach 2014](http://greach.es/). 
+See live presentation in [here](http://fabricematrat.github.io/yui-journey)
